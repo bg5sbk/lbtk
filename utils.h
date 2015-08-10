@@ -26,17 +26,17 @@
 #define PIPE_SIZE 524288
 
 #ifdef HAVE_ASSERT
-# define ASSERT(x) assert((x))
+#define ASSERT(x) assert((x))
 #else
-# define ASSERT(...)
+#define ASSERT(...)
 #endif
 
 #define LOG(FMT,...) main_log(FMT"\n", ##__VA_ARGS__)
 
 #ifdef HAVE_DEBUG
-# define DEBUG(FMT,...) LOG(FMT,##__VA_ARGS__)
+#define DEBUG(FMT,...) LOG(FMT,##__VA_ARGS__)
 #else
-# define DEBUG(...)
+#define DEBUG(...)
 #endif
 
 #define ACCESS(FMT,...) LOG(FMT,##__VA_ARGS__)
@@ -115,11 +115,12 @@
 extern uint32_t main_flags;
 extern volatile int running;
 
-int sockaddr_init(struct sockaddr *sa, char *url);
-void sockaddr_dump(const struct sockaddr *sa, char *dst, size_t dlen);
+int sockaddr_init (struct sockaddr *sa, char *url);
+void sockaddr_dump (const struct sockaddr *sa, char *dst, size_t dlen);
+void sock_set_chatty (int fd, int on);
 
-char** main_init (int argc, char **argv);
-void main_run (void (*run)());
-void main_log(char *fmt, ...);
+char **main_init (int argc, char **argv);
+void main_run (void (*run) ());
+void main_log (char *fmt, ...);
 
 #endif
