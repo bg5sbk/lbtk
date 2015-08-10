@@ -2,7 +2,7 @@ package main
 
 import (
 	"bufio"
-	. "github.com/golang/exp/inotify"
+	. "github.com/jfsmig/exp/inotify"
 	"flag"
 	"fmt"
 	"io"

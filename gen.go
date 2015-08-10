@@ -85,6 +85,8 @@ func main() {
 		defer out.Close()
 		out.AddTransport(ipc.NewTransport())
 		out.AddTransport(tcp.NewTransport())
+		out.SetOption(mangos.OptionWriteQLen, 16)
+		out.SetOption(mangos.OptionRetryTime, 0)
 		for i:=0; i<flag.NArg() ;i++ {
 			if err := out.Listen(flag.Arg(i)); err != nil {
 				log.Fatal("Nanomsg listen() error: ", err)

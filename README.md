@@ -123,13 +123,15 @@ Here is the result:
 Obviously, the key idea is to make the backend services register in a directory monitored by the refresher...
 
 ## TODO
+* fix the proxy-tcp.go that doesn't manage well disconnections from the backend or the client
 * Add a (configurable) timeout on connections to prevent idle channels to consume all the proxy's slots.
 * Make the maximum number of incoming connection configurable. Now this value is computed as 1/4 of the system limit on open file descriptors. "1/4" because there is at most 4 desciptors for 1 tunnel : incoming, backend, pipe.
 * Propose an optional bandwidth limitation for a bit of fair QoS.
-* Provide handy refreshers for tests ...
+* Provide handy refreshers for ...
   * based on [Ganglia][ganglia] monitoring
   * based on [Consul.io][consul] monitoring
-  * ...
+  * based on [Redis][redis] monitoring
+* Provide a proxy for UDP messages, on the same basis
 
 [ha]: http://www.haproxy.org/
 [nn]: http://nanomsg.org/
@@ -140,4 +142,5 @@ Obviously, the key idea is to make the backend services register in a directory 
 [go]: http://golang.org
 [ganglia]: http://ganglia.sourceforge.net/
 [consul]: http://consul.io
+[redis]: http://redis.io
 

@@ -37,7 +37,7 @@ func main() {
 	var wg sync.WaitGroup
 	for _, front := range fronts {
 		wg.Add(1)
-		go func(f *Front) { f.run(); wg.Done() }(front)
+		go func(wg *sync.WaitGroup, f *Front) { f.run(); wg.Done() }(&wg, front)
 	}
 	wg.Wait()
 	for _, front := range fronts {
@@ -99,6 +99,7 @@ func MakeFront(server *Server, concurrency int, config string) (*Front, error) {
 		self.feeder = nn
 		self.feeder.AddTransport(ipc.NewTransport())
 		self.feeder.AddTransport(tcp.NewTransport())
+		self.feeder.SetOption(mangos.OptionReadQLen, 16)
 	}
 	for i := 1; i < len(tokens); i++ {
 		self.feeder.Dial(tokens[i])
@@ -152,11 +153,11 @@ func (self *Front) run() {
 		} else {
 			log.Println("Incoming", tunnel)
 			wg.Add(1)
-			go func(t *Tunnel) {
+			go func(wg *sync.WaitGroup, t *Tunnel) {
 				defer self.produce()
 				defer wg.Done()
 				t.run()
-			}(tunnel)
+			}(&wg, tunnel)
 		}
 	}
 	wg.Wait()
@@ -187,11 +188,20 @@ func (self *Tunnel) String() string {
 }
 
 func (self *Tunnel) run() {
-	defer self.front.Close()
-	defer self.back.Close()
 	var wg sync.WaitGroup
-	wg.Add(1)
-	go io.Copy(self.front, self.back)
-	io.Copy(self.back, self.front)
+	wg.Add(2)
+	fn := func (wg *sync.WaitGroup, t *Tunnel, up bool) {
+		defer t.front.Close()
+		defer t.back.Close()
+		defer wg.Done()
+		if (up) {
+			io.Copy(t.front, t.back)
+		} else {
+			io.Copy(t.back, t.front)
+		}
+	}
+	go fn (&wg, self, true)
+	fn (&wg, self, false)
 	wg.Wait()
+	log.Println("Closed", self)
 }

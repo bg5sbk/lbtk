@@ -44,7 +44,7 @@ echo-tcp: Makefile echo-tcp.go
 	go build echo-tcp.go
 
 refresh-file: Makefile refresh-file.go
-	go get github.com/golang/exp/inotify
+	go get github.com/jfsmig/exp/inotify
 	go build refresh-file.go
 refresh-static: Makefile refresh-static.go
 	go build refresh-static.go
